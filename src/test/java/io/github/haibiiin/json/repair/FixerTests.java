@@ -15,15 +15,20 @@
  */
 package io.github.haibiiin.json.repair;
 
+import io.github.haibiiin.json.repair.test.kits.FixerStrategy;
+import io.github.haibiiin.json.repair.test.kits.TestCaseArgumentsProvider;
+import io.github.haibiiin.json.repair.test.kits.TestCaseSource;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 public class FixerTests {
     
-    @Test
-    public void testSimpleRepair() {
-        String json = "{\"field\":\"value\"}";
+    @ParameterizedTest
+    @TestCaseSource(path = "/case/simple.xml", type = FixerStrategy.SIMPLE)
+    @ArgumentsSource(TestCaseArgumentsProvider.class)
+    public void testSimpleRepair(String anomaly, String correct) {
         Fixer fixer = new Fixer();
-        Assertions.assertEquals("{\"field\":\"value\"}", fixer.repair(json));
+        Assertions.assertEquals(correct, fixer.repair(anomaly));
     }
 }
