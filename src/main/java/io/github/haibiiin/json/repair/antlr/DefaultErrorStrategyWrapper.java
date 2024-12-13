@@ -25,6 +25,10 @@ public class DefaultErrorStrategyWrapper extends DefaultErrorStrategy {
     
     @Override
     public String getTokenErrorDisplay(Token t) {
-        return super.getTokenErrorDisplay(t);
+        String defaultErrorDisplay = super.getTokenErrorDisplay(t);
+        if (defaultErrorDisplay.startsWith("'") && defaultErrorDisplay.endsWith("'")) {
+            return defaultErrorDisplay.substring(1, defaultErrorDisplay.length() - 1);
+        }
+        return defaultErrorDisplay;
     }
 }

@@ -42,7 +42,7 @@ public class SyntaxErrorListener implements ANTLRErrorListener {
             
             IntervalSet expectingSet = ((JSONParser) recognizer).getExpectedTokens();
             IntervalSetSimplifiedWrapper expectingWrapper = new IntervalSetSimplifiedWrapper(expectingSet);
-            List<String> expectingStrs = expectingWrapper.toStringList(recognizer.getVocabulary());
+            List<String> expectingStrs = expectingWrapper.toStringList(new VocabularyWrapper(recognizer.getVocabulary()));
             
             this.expecting.add(i1, expectingKey, expectingStrs);
         }
