@@ -28,7 +28,7 @@ public class FixerTests {
     @TestCaseSource(path = "/case/simple.xml", type = FixerStrategy.SIMPLE)
     @ArgumentsSource(TestCaseArgumentsProvider.class)
     public void testSimpleRepair(String anomaly, String correct) {
-        Fixer fixer = new Fixer();
-        Assertions.assertEquals(correct, fixer.repair(anomaly));
+        JSONRepair repair = new JSONRepair();
+        Assertions.assertEquals(correct, repair.handle(anomaly));
     }
 }

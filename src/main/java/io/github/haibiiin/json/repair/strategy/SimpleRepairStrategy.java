@@ -106,19 +106,19 @@ public class SimpleRepairStrategy implements RepairStrategy {
     private boolean expectingArrValue(String json, int index) {
         return json.substring(index).contains(KeySymbol.COMMA.val());
     }
-
+    
     private boolean expectingValue(String json, int index) {
         return json.substring(index).contains(KeySymbol.COLON.val());
     }
-
+    
     private boolean expectingObj(List<String> expectingList) {
         return expectingList.size() == 11;
     }
-
+    
     private boolean expectingArr(List<String> expectingList) {
         return expectingList.size() == 7;
     }
-
+    
     private int getCharPositionInLineFromErrorNode(List<ParseTree> beRepairParseList) {
         for (int i = beRepairParseList.size() - 1; i > 0; i--) {
             ParseTree parseNode = beRepairParseList.get(i);

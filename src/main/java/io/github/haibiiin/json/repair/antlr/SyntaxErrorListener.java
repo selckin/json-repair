@@ -17,7 +17,6 @@ package io.github.haibiiin.json.repair.antlr;
 
 import io.github.haibiiin.json.repair.Expecting;
 import io.github.haibiiin.json.repair.antlr.autogen.JSONParser;
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;

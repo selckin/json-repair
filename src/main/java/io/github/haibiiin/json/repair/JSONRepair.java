@@ -26,15 +26,15 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class Fixer {
+public class JSONRepair {
     
     private final RepairStrategy repairStrategy;
     
-    public Fixer() {
+    public JSONRepair() {
         this.repairStrategy = new SimpleRepairStrategy();
     }
     
-    public String repair(String beRepairJSON) {
+    public String handle(String beRepairJSON) {
         CharStream charStream = CharStreams.fromString(beRepairJSON);
         JSONLexer lexer = new JSONLexer(charStream);
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
@@ -50,7 +50,7 @@ public class Fixer {
         List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
         String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
         
-        return repair(repairJSON);
+        return handle(repairJSON);
     }
     
     private boolean correct(Expecting expecting) {
