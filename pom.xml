@@ -17,6 +17,7 @@
 
         <antlr4.version>4.8</antlr4.version>
         <junit.version>5.8.2</junit.version>
+        <xstream.version>1.4.21</xstream.version>
 
         <antlr4-maven-plugin.version>4.8</antlr4-maven-plugin.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
@@ -33,6 +34,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>${xstream.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
