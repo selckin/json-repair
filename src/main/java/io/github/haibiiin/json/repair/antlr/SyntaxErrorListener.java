@@ -17,6 +17,8 @@ package io.github.haibiiin.json.repair.antlr;
 
 import io.github.haibiiin.json.repair.Expecting;
 import io.github.haibiiin.json.repair.antlr.autogen.JSONParser;
+
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import org.antlr.v4.runtime.*;
@@ -39,11 +41,19 @@ public class SyntaxErrorListener implements ANTLRErrorListener {
         if (recognizer instanceof JSONParser) {
             Token token = ((JSONParser) recognizer).getCurrentToken();
             String expectingKey = strategyWrapper.getTokenErrorDisplay(token);
-            
-            IntervalSet expectingSet = ((JSONParser) recognizer).getExpectedTokens();
-            IntervalSetSimplifiedWrapper expectingWrapper = new IntervalSetSimplifiedWrapper(expectingSet);
-            List<String> expectingStrs = expectingWrapper.toStringList(new VocabularyWrapper(recognizer.getVocabulary()));
-            
+            List<String> expectingStrs = new ArrayList<>();
+            if (e instanceof NoViableAltException) {
+                if (KeySymbol.L_BRACKET.val().equalsIgnoreCase(expectingKey)) {
+                    expectingStrs = KeySymbol.value();
+                }
+                if (KeySymbol.L_BRACE.val().equalsIgnoreCase(expectingKey)) {
+                    expectingStrs = KeySymbol.obj();
+                }
+            } else {
+                IntervalSet expectingSet = ((JSONParser) recognizer).getExpectedTokens();
+                IntervalSetSimplifiedWrapper expectingWrapper = new IntervalSetSimplifiedWrapper(expectingSet);
+                expectingStrs = expectingWrapper.toStringList(new VocabularyWrapper(recognizer.getVocabulary()));
+            }
             this.expecting.add(i1, expectingKey, expectingStrs);
         }
     }

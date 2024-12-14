@@ -15,6 +15,9 @@
  */
 package io.github.haibiiin.json.repair.antlr;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum KeySymbol {
     
     L_BRACE("{"),
@@ -38,5 +41,17 @@ public enum KeySymbol {
     
     public String val() {
         return val;
+    }
+
+    public static List<String> value() {
+        return Arrays.asList(STRING.val, NUMBER.val, TRUE.val, FALSE.val, NULL.val, L_BRACE.val, L_BRACKET.val);
+    }
+
+    public static List<String> obj() {
+        return Arrays.asList(
+                STRING.val, NUMBER.val, TRUE.val, FALSE.val, NULL.val,
+                L_BRACE.val, R_BRACE.val, L_BRACKET.val, R_BRACKET.val,
+                COLON.val, COMMA.val
+        );
     }
 }

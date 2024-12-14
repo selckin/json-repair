@@ -38,9 +38,37 @@ public class SimpleRepairStrategy implements RepairStrategy {
                 return json.substring(0, index) + KeySymbol.R_BRACE.val();
             }
             if (expectingValue(node.expectingList())) {
-                if (expectingArrValue(json)) {
-                    int index = getCharPositionInLineFromErrorNode(beRepairParseList);
+                int index = getCharPositionInLineFromErrorNode(beRepairParseList);
+                if (expectingArrValue(json, index)) {
                     return json.substring(0, index) + KeySymbol.R_BRACKET.val();
+                }
+                if (expectingValue(json, index)) {
+                    return json + KeySymbol.NULL.val() + KeySymbol.R_BRACE.val();
+                }
+            }
+        } else {
+            for (ParseTree parseNode : beRepairParseList) {
+                if (parseNode instanceof ErrorNode) {
+                    if (node.key().equalsIgnoreCase(parseNode.getText())) {
+                        if (expectingObj(node.expectingList())) {
+                            int index = ((ErrorNodeImpl) parseNode).getSymbol().getCharPositionInLine();
+                            if (index == json.length() - 1) {
+                                return json + KeySymbol.R_BRACE.val();
+                            }
+                            String prefix = json.substring(0, index + 1);
+                            String suffix = json.substring(index + 1);
+                            return prefix + KeySymbol.R_BRACE.val() + suffix;
+                        }
+                        if (expectingArr(node.expectingList())) {
+                            int index = ((ErrorNodeImpl) parseNode).getSymbol().getCharPositionInLine();
+                            if (index == json.length() - 1) {
+                                return json + KeySymbol.R_BRACKET.val();
+                            }
+                            String prefix = json.substring(0, index + 1);
+                            String suffix = json.substring(index + 1);
+                            return prefix + KeySymbol.R_BRACKET.val() + suffix;
+                        }
+                    }
                 }
             }
         }
@@ -75,16 +103,27 @@ public class SimpleRepairStrategy implements RepairStrategy {
                 && expectingList.contains(KeySymbol.NUMBER.val());
     }
     
-    private boolean expectingArrValue(String json) {
-        return KeySymbol.COMMA.val().equalsIgnoreCase(json.substring(json.length() - 1));
+    private boolean expectingArrValue(String json, int index) {
+        return json.substring(index).contains(KeySymbol.COMMA.val());
     }
-    
+
+    private boolean expectingValue(String json, int index) {
+        return json.substring(index).contains(KeySymbol.COLON.val());
+    }
+
+    private boolean expectingObj(List<String> expectingList) {
+        return expectingList.size() == 11;
+    }
+
+    private boolean expectingArr(List<String> expectingList) {
+        return expectingList.size() == 7;
+    }
+
     private int getCharPositionInLineFromErrorNode(List<ParseTree> beRepairParseList) {
         for (int i = beRepairParseList.size() - 1; i > 0; i--) {
             ParseTree parseNode = beRepairParseList.get(i);
             if (parseNode instanceof ErrorNode) {
-                int charPositionInLine = ((ErrorNodeImpl) (beRepairParseList.get(i))).getSymbol().getCharPositionInLine();
-                return charPositionInLine;
+                return ((ErrorNodeImpl) (beRepairParseList.get(i))).getSymbol().getCharPositionInLine();
             }
         }
         return -1;
