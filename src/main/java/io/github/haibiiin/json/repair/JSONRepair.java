@@ -29,12 +29,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class JSONRepair {
     
     private final RepairStrategy repairStrategy;
-    
+
     public JSONRepair() {
         this.repairStrategy = new SimpleRepairStrategy();
     }
     
-    public String handle(String beRepairJSON) {
+    public String handle(String beRepairJSON) throws RepairFailureException {
         CharStream charStream = CharStreams.fromString(beRepairJSON);
         JSONLexer lexer = new JSONLexer(charStream);
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
@@ -47,11 +47,35 @@ public class JSONRepair {
         if (correct(expecting)) {
             return beRepairJSON;
         }
+
+        int maxTryTimes = Math.max(expecting.sum(), 20);
         
         List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
         String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
         
-        return handle(repairJSON);
+        return subHandle(repairJSON, maxTryTimes, 0);
+    }
+
+    public String subHandle(String beRepairJSON, int maxTryTimes, int tryTimes) {
+        if (tryTimes == maxTryTimes) {
+            throw new OverstepTryTimesException();
+        }
+        CharStream charStream = CharStreams.fromString(beRepairJSON);
+        JSONLexer lexer = new JSONLexer(charStream);
+        JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
+        Expecting expecting = new Expecting();
+        SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener(new DefaultErrorStrategyWrapper(), expecting);
+        lexer.addErrorListener(syntaxErrorListener);
+        parser.addErrorListener(syntaxErrorListener);
+        JSONParser.JsonContext ctx = parser.json();
+
+        if (correct(expecting)) {
+            return beRepairJSON;
+        }
+        List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
+        String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
+        tryTimes++;
+        return subHandle(repairJSON, maxTryTimes, tryTimes);
     }
     
     private boolean correct(Expecting expecting) {
