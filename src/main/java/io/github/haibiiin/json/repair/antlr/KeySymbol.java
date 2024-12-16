@@ -31,7 +31,8 @@ public enum KeySymbol {
     TRUE("true"),
     FALSE("false"),
     NULL("null"),
-    EOF("<EOF>");
+    EOF("<EOF>"),
+    TOKEN("token");
     
     private String val;
     

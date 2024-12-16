@@ -50,6 +50,17 @@ public class SimpleRepairStrategy implements RepairStrategy {
             if (expectingEOF(node.expectingList())) {
                 return KeySymbol.L_BRACE.val() + json;
             }
+        } else if (this.expectingToken(node.expectingList())) {
+            if (node.key().startsWith("\"")) {
+                return json.replaceFirst(node.key(), node.key() + "\"");
+            }
+            if (node.key().endsWith("\"")) {
+                return json.replaceFirst(node.key(), "\"" + node.key());
+            }
+            if (node.key().endsWith(KeySymbol.COLON.val())) {
+                return json.replaceFirst(node.key(), "\"" + node.key().substring(0, node.key().length() - 1) + "\":");
+            }
+            return json.replaceFirst(node.key(), "\"" + node.key() + "\"");
         } else {
             for (ParseTree parseNode : beRepairParseList) {
                 if (parseNode instanceof ErrorNode) {
@@ -135,5 +146,9 @@ public class SimpleRepairStrategy implements RepairStrategy {
             }
         }
         return -1;
+    }
+
+    private boolean expectingToken(List<String> expectingList) {
+        return expectingList.size() == 1 && expectingList.contains(KeySymbol.TOKEN.val());
     }
 }

@@ -16,6 +16,7 @@
 package io.github.haibiiin.json.repair.antlr;
 
 import io.github.haibiiin.json.repair.Expecting;
+import io.github.haibiiin.json.repair.antlr.autogen.JSONLexer;
 import io.github.haibiiin.json.repair.antlr.autogen.JSONParser;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -53,6 +54,12 @@ public class SyntaxErrorListener implements ANTLRErrorListener {
                 IntervalSetSimplifiedWrapper expectingWrapper = new IntervalSetSimplifiedWrapper(expectingSet);
                 expectingStrs = expectingWrapper.toStringList(new VocabularyWrapper(recognizer.getVocabulary()));
             }
+            this.expecting.add(i1, expectingKey, expectingStrs);
+        }
+        if (recognizer instanceof JSONLexer) {
+            String expectingKey = s.substring(s.indexOf("'") + 1, s.lastIndexOf("'"));
+            List<String> expectingStrs = new ArrayList<>();
+            expectingStrs.add(KeySymbol.TOKEN.val());
             this.expecting.add(i1, expectingKey, expectingStrs);
         }
     }

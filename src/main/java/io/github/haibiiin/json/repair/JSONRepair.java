@@ -40,6 +40,7 @@ public class JSONRepair {
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
         Expecting expecting = new Expecting();
         SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener(new DefaultErrorStrategyWrapper(), expecting);
+        lexer.addErrorListener(syntaxErrorListener);
         parser.addErrorListener(syntaxErrorListener);
         JSONParser.JsonContext ctx = parser.json();
         
