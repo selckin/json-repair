@@ -46,6 +46,10 @@ public class SimpleRepairStrategy implements RepairStrategy {
                     return json + KeySymbol.NULL.val() + KeySymbol.R_BRACE.val();
                 }
             }
+        } else if (KeySymbol.COLON.val().equalsIgnoreCase(node.key())) {
+            if (expectingEOF(node.expectingList())) {
+                return KeySymbol.L_BRACE.val() + json;
+            }
         } else {
             for (ParseTree parseNode : beRepairParseList) {
                 if (parseNode instanceof ErrorNode) {
@@ -117,6 +121,10 @@ public class SimpleRepairStrategy implements RepairStrategy {
     
     private boolean expectingArr(List<String> expectingList) {
         return expectingList.size() == 7;
+    }
+
+    private boolean expectingEOF(List<String> expectingList) {
+        return expectingList.size() == 1 && expectingList.contains(KeySymbol.EOF.val());
     }
     
     private int getCharPositionInLineFromErrorNode(List<ParseTree> beRepairParseList) {
