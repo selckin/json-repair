@@ -29,9 +29,27 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class JSONRepair {
     
     private final RepairStrategy repairStrategy;
-
+    
+    private final JSONRepairConfig properties;
+    
     public JSONRepair() {
         this.repairStrategy = new SimpleRepairStrategy();
+        this.properties = new JSONRepairConfig();
+    }
+    
+    public JSONRepair(RepairStrategy repairStrategy) {
+        this.repairStrategy = repairStrategy;
+        this.properties = new JSONRepairConfig();
+    }
+    
+    public JSONRepair(JSONRepairConfig config) {
+        this.repairStrategy = new SimpleRepairStrategy();
+        this.properties = config;
+    }
+    
+    public JSONRepair(RepairStrategy repairStrategy, JSONRepairConfig config) {
+        this.repairStrategy = repairStrategy;
+        this.properties = config;
     }
     
     public String handle(String beRepairJSON) throws RepairFailureException {
@@ -47,15 +65,15 @@ public class JSONRepair {
         if (correct(expecting)) {
             return beRepairJSON;
         }
-
-        int maxTryTimes = Math.max(expecting.sum(), 20);
+        
+        int maxTryTimes = Math.max(expecting.sum(), this.properties.maxTryTimes());
         
         List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
         String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
         
         return subHandle(repairJSON, maxTryTimes, 0);
     }
-
+    
     public String subHandle(String beRepairJSON, int maxTryTimes, int tryTimes) {
         if (tryTimes == maxTryTimes) {
             throw new OverstepTryTimesException();
@@ -68,7 +86,7 @@ public class JSONRepair {
         lexer.addErrorListener(syntaxErrorListener);
         parser.addErrorListener(syntaxErrorListener);
         JSONParser.JsonContext ctx = parser.json();
-
+        
         if (correct(expecting)) {
             return beRepairJSON;
         }

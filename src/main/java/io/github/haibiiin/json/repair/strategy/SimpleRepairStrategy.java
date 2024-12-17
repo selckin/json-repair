@@ -133,7 +133,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
     private boolean expectingArr(List<String> expectingList) {
         return expectingList.size() == 7;
     }
-
+    
     private boolean expectingEOF(List<String> expectingList) {
         return expectingList.size() == 1 && expectingList.contains(KeySymbol.EOF.val());
     }
@@ -147,7 +147,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
         }
         return -1;
     }
-
+    
     private boolean expectingToken(List<String> expectingList) {
         return expectingList.size() == 1 && expectingList.contains(KeySymbol.TOKEN.val());
     }

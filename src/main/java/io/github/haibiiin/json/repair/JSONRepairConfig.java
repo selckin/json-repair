@@ -15,17 +15,26 @@
  */
 package io.github.haibiiin.json.repair;
 
-public class OverstepTryTimesException extends RepairFailureException {
+import java.util.Properties;
+
+public class JSONRepairConfig {
     
-    public OverstepTryTimesException() {
-        super();
+    private final Properties properties;
+    
+    public JSONRepairConfig() {
+        this.properties = new Properties();
+        this.properties.put(Property.MAX_TRY_TIMES.name(), 20);
     }
     
-    public OverstepTryTimesException(String message) {
-        super(message);
+    public int maxTryTimes() {
+        return (int) this.properties.getOrDefault(Property.MAX_TRY_TIMES.name(), 20);
     }
     
-    public OverstepTryTimesException(String message, Throwable cause) {
-        super(message, cause);
+    public void maxTryTimes(int value) {
+        this.properties.put(Property.MAX_TRY_TIMES.name(), value);
+    }
+    
+    public enum Property {
+        MAX_TRY_TIMES;
     }
 }
