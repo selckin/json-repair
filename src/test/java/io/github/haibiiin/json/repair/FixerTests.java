@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 public class FixerTests {
     
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0} > {1}")
     @TestCaseSource(path = "/case/simple.xml", type = FixerStrategy.SIMPLE)
     @ArgumentsSource(TestCaseArgumentsProvider.class)
     public void testSimpleRepair(String anomaly, String correct) {

@@ -58,8 +58,12 @@ public class JSONRepair {
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
         Expecting expecting = new Expecting();
         SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener(new DefaultErrorStrategyWrapper(), expecting);
+
+        lexer.removeErrorListeners();
+        parser.removeErrorListeners();
         lexer.addErrorListener(syntaxErrorListener);
         parser.addErrorListener(syntaxErrorListener);
+
         JSONParser.JsonContext ctx = parser.json();
         
         if (correct(expecting)) {
@@ -83,8 +87,12 @@ public class JSONRepair {
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
         Expecting expecting = new Expecting();
         SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener(new DefaultErrorStrategyWrapper(), expecting);
+
+        lexer.removeErrorListeners();
+        parser.removeErrorListeners();
         lexer.addErrorListener(syntaxErrorListener);
         parser.addErrorListener(syntaxErrorListener);
+
         JSONParser.JsonContext ctx = parser.json();
         
         if (correct(expecting)) {
