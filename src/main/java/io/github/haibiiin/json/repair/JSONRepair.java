@@ -30,27 +30,78 @@ public class JSONRepair {
     
     private final RepairStrategy repairStrategy;
     
+    private final JSONRepairConfig properties;
+    
     public JSONRepair() {
         this.repairStrategy = new SimpleRepairStrategy();
+        this.properties = new JSONRepairConfig();
     }
     
-    public String handle(String beRepairJSON) {
+    public JSONRepair(RepairStrategy repairStrategy) {
+        this.repairStrategy = repairStrategy;
+        this.properties = new JSONRepairConfig();
+    }
+    
+    public JSONRepair(JSONRepairConfig config) {
+        this.repairStrategy = new SimpleRepairStrategy();
+        this.properties = config;
+    }
+    
+    public JSONRepair(RepairStrategy repairStrategy, JSONRepairConfig config) {
+        this.repairStrategy = repairStrategy;
+        this.properties = config;
+    }
+    
+    public String handle(String beRepairJSON) throws RepairFailureException {
         CharStream charStream = CharStreams.fromString(beRepairJSON);
         JSONLexer lexer = new JSONLexer(charStream);
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
         Expecting expecting = new Expecting();
         SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener(new DefaultErrorStrategyWrapper(), expecting);
+
+        lexer.removeErrorListeners();
+        parser.removeErrorListeners();
+        lexer.addErrorListener(syntaxErrorListener);
         parser.addErrorListener(syntaxErrorListener);
+
         JSONParser.JsonContext ctx = parser.json();
         
         if (correct(expecting)) {
             return beRepairJSON;
         }
         
+        int maxTryTimes = Math.max(expecting.sum(), this.properties.maxTryTimes());
+        
         List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
         String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
         
-        return handle(repairJSON);
+        return subHandle(repairJSON, maxTryTimes, 0);
+    }
+    
+    public String subHandle(String beRepairJSON, int maxTryTimes, int tryTimes) {
+        if (tryTimes == maxTryTimes) {
+            throw new OverstepTryTimesException();
+        }
+        CharStream charStream = CharStreams.fromString(beRepairJSON);
+        JSONLexer lexer = new JSONLexer(charStream);
+        JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
+        Expecting expecting = new Expecting();
+        SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener(new DefaultErrorStrategyWrapper(), expecting);
+
+        lexer.removeErrorListeners();
+        parser.removeErrorListeners();
+        lexer.addErrorListener(syntaxErrorListener);
+        parser.addErrorListener(syntaxErrorListener);
+
+        JSONParser.JsonContext ctx = parser.json();
+        
+        if (correct(expecting)) {
+            return beRepairJSON;
+        }
+        List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
+        String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
+        tryTimes++;
+        return subHandle(repairJSON, maxTryTimes, tryTimes);
     }
     
     private boolean correct(Expecting expecting) {

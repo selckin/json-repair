@@ -46,6 +46,21 @@ public class SimpleRepairStrategy implements RepairStrategy {
                     return json + KeySymbol.NULL.val() + KeySymbol.R_BRACE.val();
                 }
             }
+        } else if (KeySymbol.COLON.val().equalsIgnoreCase(node.key())) {
+            if (expectingEOF(node.expectingList())) {
+                return KeySymbol.L_BRACE.val() + json;
+            }
+        } else if (this.expectingToken(node.expectingList())) {
+            if (node.key().startsWith("\"")) {
+                return json.replaceFirst(node.key(), node.key() + "\"");
+            }
+            if (node.key().endsWith("\"")) {
+                return json.replaceFirst(node.key(), "\"" + node.key());
+            }
+            if (node.key().endsWith(KeySymbol.COLON.val())) {
+                return json.replaceFirst(node.key(), "\"" + node.key().substring(0, node.key().length() - 1) + "\":");
+            }
+            return json.replaceFirst(node.key(), "\"" + node.key() + "\"");
         } else {
             for (ParseTree parseNode : beRepairParseList) {
                 if (parseNode instanceof ErrorNode) {
@@ -119,6 +134,10 @@ public class SimpleRepairStrategy implements RepairStrategy {
         return expectingList.size() == 7;
     }
     
+    private boolean expectingEOF(List<String> expectingList) {
+        return expectingList.size() == 1 && expectingList.contains(KeySymbol.EOF.val());
+    }
+    
     private int getCharPositionInLineFromErrorNode(List<ParseTree> beRepairParseList) {
         for (int i = beRepairParseList.size() - 1; i > 0; i--) {
             ParseTree parseNode = beRepairParseList.get(i);
@@ -127,5 +146,9 @@ public class SimpleRepairStrategy implements RepairStrategy {
             }
         }
         return -1;
+    }
+    
+    private boolean expectingToken(List<String> expectingList) {
+        return expectingList.size() == 1 && expectingList.contains(KeySymbol.TOKEN.val());
     }
 }

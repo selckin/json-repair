@@ -88,4 +88,36 @@
         <anomaly>{"f":"v", "o":{ </anomaly>
         <correct>{"f":"v", "o":{} }</correct>
     </test-case>
+    <test-case>
+        <anomaly>"f":"v"</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v"}</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v", "a":[1,2], "o1":{"f1":"v1"}</anomaly>
+        <correct>{"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</anomaly>
+        <correct>{"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>{"f":v</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>{"f":"v</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>{f:v</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>f:v</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
 </test-cases>

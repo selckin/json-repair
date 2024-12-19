@@ -39,6 +39,10 @@ public class Expecting {
         return this.list.get(0);
     }
     
+    public int sum() {
+        return this.list.size();
+    }
+    
     public class Node {
         
         private int index;
