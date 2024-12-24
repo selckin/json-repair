@@ -19,6 +19,8 @@ import io.github.haibiiin.json.repair.Expecting;
 import io.github.haibiiin.json.repair.RepairStrategy;
 import io.github.haibiiin.json.repair.antlr.KeySymbol;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import org.antlr.v4.runtime.tree.*;
 
 public class SimpleRepairStrategy implements RepairStrategy {
@@ -26,31 +28,14 @@ public class SimpleRepairStrategy implements RepairStrategy {
     @Override
     public String repair(String json, List<ParseTree> beRepairParseList, Expecting expecting) {
         Expecting.Node node = expecting.first();
-        if (node.isEOF()) {
-            if (endObjOrPair(node.expectingList())) {
-                return json + KeySymbol.R_BRACE.val();
-            }
-            if (endArrOrValue(node.expectingList())) {
-                return json + KeySymbol.R_BRACKET.val();
-            }
-            if (startPair(node.expectingList())) {
-                int index = getCharPositionInLineFromErrorNode(beRepairParseList);
-                return json.substring(0, index) + KeySymbol.R_BRACE.val();
-            }
-            if (expectingValue(node.expectingList())) {
-                int index = getCharPositionInLineFromErrorNode(beRepairParseList);
-                if (expectingArrValue(json, index)) {
-                    return json.substring(0, index) + KeySymbol.R_BRACKET.val();
-                }
-                if (expectingValue(json, index)) {
-                    return json + KeySymbol.NULL.val() + KeySymbol.R_BRACE.val();
-                }
-            }
-        } else if (KeySymbol.COLON.val().equalsIgnoreCase(node.key())) {
-            if (expectingEOF(node.expectingList())) {
-                return KeySymbol.L_BRACE.val() + json;
-            }
-        } else if (this.expectingToken(node.expectingList())) {
+        SimpleNodeWrapper simpleNode = new SimpleNodeWrapper(node);
+        
+        FixStrategy strategy = FixStrategy.get(simpleNode);
+        if (strategy != null) {
+            return strategy.fixStrategy.apply(json, beRepairParseList);
+        }
+        
+        if (simpleNode.expectingToken()) {
             if (node.key().startsWith("\"")) {
                 return json.replaceFirst(node.key(), node.key() + "\"");
             }
@@ -65,7 +50,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
             for (ParseTree parseNode : beRepairParseList) {
                 if (parseNode instanceof ErrorNode) {
                     if (node.key().equalsIgnoreCase(parseNode.getText())) {
-                        if (expectingObj(node.expectingList())) {
+                        if (simpleNode.expectingObj()) {
                             int index = ((ErrorNodeImpl) parseNode).getSymbol().getCharPositionInLine();
                             if (index == json.length() - 1) {
                                 return json + KeySymbol.R_BRACE.val();
@@ -74,7 +59,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
                             String suffix = json.substring(index + 1);
                             return prefix + KeySymbol.R_BRACE.val() + suffix;
                         }
-                        if (expectingArr(node.expectingList())) {
+                        if (simpleNode.expectingArr()) {
                             int index = ((ErrorNodeImpl) parseNode).getSymbol().getCharPositionInLine();
                             if (index == json.length() - 1) {
                                 return json + KeySymbol.R_BRACKET.val();
@@ -90,65 +75,124 @@ public class SimpleRepairStrategy implements RepairStrategy {
         return json;
     }
     
-    private boolean endObjOrPair(List<String> expectingList) {
-        return expectingList.size() == 2
-                && expectingList.contains(KeySymbol.COMMA.val())
-                && expectingList.contains(KeySymbol.R_BRACE.val());
-    }
-    
-    private boolean endArrOrValue(List<String> expectingList) {
-        return expectingList.size() == 2
-                && expectingList.contains(KeySymbol.COMMA.val())
-                && expectingList.contains(KeySymbol.R_BRACKET.val());
-    }
-    
-    private boolean startPair(List<String> expectingList) {
-        return expectingList.size() == 1
-                && expectingList.contains(KeySymbol.STRING.val());
-    }
-    
-    private boolean expectingValue(List<String> expectingList) {
-        return expectingList.size() == 7
-                && expectingList.contains(KeySymbol.L_BRACE.val())
-                && expectingList.contains(KeySymbol.L_BRACKET.val())
-                && expectingList.contains(KeySymbol.TRUE.val())
-                && expectingList.contains(KeySymbol.FALSE.val())
-                && expectingList.contains(KeySymbol.NULL.val())
-                && expectingList.contains(KeySymbol.STRING.val())
-                && expectingList.contains(KeySymbol.NUMBER.val());
-    }
-    
-    private boolean expectingArrValue(String json, int index) {
-        return json.substring(index).contains(KeySymbol.COMMA.val());
-    }
-    
-    private boolean expectingValue(String json, int index) {
-        return json.substring(index).contains(KeySymbol.COLON.val());
-    }
-    
-    private boolean expectingObj(List<String> expectingList) {
-        return expectingList.size() == 11;
-    }
-    
-    private boolean expectingArr(List<String> expectingList) {
-        return expectingList.size() == 7;
-    }
-    
-    private boolean expectingEOF(List<String> expectingList) {
-        return expectingList.size() == 1 && expectingList.contains(KeySymbol.EOF.val());
-    }
-    
-    private int getCharPositionInLineFromErrorNode(List<ParseTree> beRepairParseList) {
-        for (int i = beRepairParseList.size() - 1; i > 0; i--) {
-            ParseTree parseNode = beRepairParseList.get(i);
-            if (parseNode instanceof ErrorNode) {
-                return ((ErrorNodeImpl) (beRepairParseList.get(i))).getSymbol().getCharPositionInLine();
-            }
+    class SimpleNodeWrapper {
+        
+        private final Expecting.Node node;
+        
+        private SimpleNodeWrapper(Expecting.Node node) {
+            this.node = node;
         }
-        return -1;
+        
+        public boolean isEOF() {
+            return KeySymbol.EOF.val().equalsIgnoreCase(node.key());
+        }
+        
+        public boolean endObjOrPair() {
+            return node.expectingList().size() == 2
+                    && node.expectingList().contains(KeySymbol.COMMA.val())
+                    && node.expectingList().contains(KeySymbol.R_BRACE.val());
+        }
+        
+        public boolean endArrOrValue() {
+            return node.expectingList().size() == 2
+                    && node.expectingList().contains(KeySymbol.COMMA.val())
+                    && node.expectingList().contains(KeySymbol.R_BRACKET.val());
+        }
+        
+        public boolean startPair() {
+            return node.expectingList().size() == 1
+                    && node.expectingList().contains(KeySymbol.STRING.val());
+        }
+        
+        public boolean expectingValue() {
+            return node.expectingList().size() == 7
+                    && node.expectingList().contains(KeySymbol.L_BRACE.val())
+                    && node.expectingList().contains(KeySymbol.L_BRACKET.val())
+                    && node.expectingList().contains(KeySymbol.TRUE.val())
+                    && node.expectingList().contains(KeySymbol.FALSE.val())
+                    && node.expectingList().contains(KeySymbol.NULL.val())
+                    && node.expectingList().contains(KeySymbol.STRING.val())
+                    && node.expectingList().contains(KeySymbol.NUMBER.val());
+        }
+        
+        public boolean expectingObj() {
+            return node.expectingList().size() == 11;
+        }
+        
+        public boolean expectingArr() {
+            return node.expectingList().size() == 7;
+        }
+        
+        public boolean expectingEOF() {
+            return KeySymbol.COLON.val().equalsIgnoreCase(node.key())
+                    && node.expectingList().size() == 1
+                    && node.expectingList().contains(KeySymbol.EOF.val());
+        }
+        
+        public boolean expectingToken() {
+            return node.expectingList().size() == 1 && node.expectingList().contains(KeySymbol.TOKEN.val());
+        }
     }
     
-    private boolean expectingToken(List<String> expectingList) {
-        return expectingList.size() == 1 && expectingList.contains(KeySymbol.TOKEN.val());
+    enum FixStrategy {
+        
+        END_OBJ_OR_PAIR(
+                (SimpleNodeWrapper node) -> node.isEOF() && node.endObjOrPair(),
+                (String json, List<ParseTree> beRepairParseList) -> json + KeySymbol.R_BRACE.val()),
+        END_ARR_OR_VALUE(
+                (SimpleNodeWrapper node) -> node.isEOF() && node.endArrOrValue(),
+                (String json, List<ParseTree> beRepairParseList) -> json + KeySymbol.R_BRACKET.val()),
+        START_PAIR(
+                (SimpleNodeWrapper node) -> node.isEOF() && node.startPair(),
+                (String json, List<ParseTree> beRepairParseList) -> {
+                    int index = -1;
+                    for (int i = beRepairParseList.size() - 1; i > 0; i--) {
+                        ParseTree parseNode = beRepairParseList.get(i);
+                        if (parseNode instanceof ErrorNode) {
+                            index = ((ErrorNodeImpl) (beRepairParseList.get(i))).getSymbol().getCharPositionInLine();
+                        }
+                    }
+                    return json.substring(0, index) + KeySymbol.R_BRACE.val();
+                }),
+        VALUE(
+                (SimpleNodeWrapper node) -> node.isEOF() && node.expectingValue(),
+                (String json, List<ParseTree> beRepairParseList) -> {
+                    int index = -1;
+                    for (int i = beRepairParseList.size() - 1; i > 0; i--) {
+                        ParseTree parseNode = beRepairParseList.get(i);
+                        if (parseNode instanceof ErrorNode) {
+                            index = ((ErrorNodeImpl) (beRepairParseList.get(i))).getSymbol().getCharPositionInLine();
+                        }
+                    }
+                    if (json.substring(index).contains(KeySymbol.COMMA.val())) {
+                        return json.substring(0, index) + KeySymbol.R_BRACKET.val();
+                    }
+                    if (json.substring(index).contains(KeySymbol.COLON.val())) {
+                        return json + KeySymbol.NULL.val() + KeySymbol.R_BRACE.val();
+                    }
+                    return json;
+                }),
+        EOF(
+                SimpleNodeWrapper::expectingEOF,
+                (String json, List<ParseTree> beRepairParseList) -> KeySymbol.L_BRACE.val() + json),
+                ;
+        
+        final Predicate<SimpleNodeWrapper> expectingFixStrategy;
+        final BiFunction<String, List<ParseTree>, String> fixStrategy;
+        
+        FixStrategy(Predicate<SimpleNodeWrapper> expectingFixStrategy, BiFunction<String, List<ParseTree>, String> fixStrategy) {
+            this.expectingFixStrategy = expectingFixStrategy;
+            this.fixStrategy = fixStrategy;
+        }
+        
+        public static FixStrategy get(SimpleNodeWrapper node) {
+            for (FixStrategy strategy : values()) {
+                if (strategy.expectingFixStrategy.test(node)) {
+                    return strategy;
+                }
+            }
+            return null;
+        }
+        
     }
 }

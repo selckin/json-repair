@@ -15,7 +15,6 @@
  */
 package io.github.haibiiin.json.repair;
 
-import io.github.haibiiin.json.repair.antlr.KeySymbol;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,10 +66,6 @@ public class Expecting {
         
         public List<String> expectingList() {
             return expectingList;
-        }
-        
-        public boolean isEOF() {
-            return KeySymbol.EOF.val().equalsIgnoreCase(this.key);
         }
     }
 }
