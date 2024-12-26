@@ -19,9 +19,10 @@ import io.github.haibiiin.json.repair.Expecting;
 import io.github.haibiiin.json.repair.RepairStrategy;
 import io.github.haibiiin.json.repair.antlr.KeySymbol;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
-import org.antlr.v4.runtime.tree.*;
+import java.util.function.BiPredicate;
+import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ErrorNodeImpl;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class SimpleRepairStrategy implements RepairStrategy {
     
@@ -30,57 +31,24 @@ public class SimpleRepairStrategy implements RepairStrategy {
         Expecting.Node node = expecting.first();
         SimpleNodeWrapper simpleNode = new SimpleNodeWrapper(node);
         
-        FixStrategy strategy = FixStrategy.get(simpleNode);
+        FixStrategy strategy = FixStrategy.get(simpleNode, beRepairParseList);
         if (strategy != null) {
-            return strategy.fixStrategy.apply(json, beRepairParseList);
+            return strategy.fixStrategy.fix(json, simpleNode, beRepairParseList);
         }
         
-        if (simpleNode.expectingToken()) {
-            if (node.key().startsWith("\"")) {
-                return json.replaceFirst(node.key(), node.key() + "\"");
-            }
-            if (node.key().endsWith("\"")) {
-                return json.replaceFirst(node.key(), "\"" + node.key());
-            }
-            if (node.key().endsWith(KeySymbol.COLON.val())) {
-                return json.replaceFirst(node.key(), "\"" + node.key().substring(0, node.key().length() - 1) + "\":");
-            }
-            return json.replaceFirst(node.key(), "\"" + node.key() + "\"");
-        } else {
-            for (ParseTree parseNode : beRepairParseList) {
-                if (parseNode instanceof ErrorNode) {
-                    if (node.key().equalsIgnoreCase(parseNode.getText())) {
-                        if (simpleNode.expectingObj()) {
-                            int index = ((ErrorNodeImpl) parseNode).getSymbol().getCharPositionInLine();
-                            if (index == json.length() - 1) {
-                                return json + KeySymbol.R_BRACE.val();
-                            }
-                            String prefix = json.substring(0, index + 1);
-                            String suffix = json.substring(index + 1);
-                            return prefix + KeySymbol.R_BRACE.val() + suffix;
-                        }
-                        if (simpleNode.expectingArr()) {
-                            int index = ((ErrorNodeImpl) parseNode).getSymbol().getCharPositionInLine();
-                            if (index == json.length() - 1) {
-                                return json + KeySymbol.R_BRACKET.val();
-                            }
-                            String prefix = json.substring(0, index + 1);
-                            String suffix = json.substring(index + 1);
-                            return prefix + KeySymbol.R_BRACKET.val() + suffix;
-                        }
-                    }
-                }
-            }
-        }
         return json;
     }
     
-    class SimpleNodeWrapper {
+    static class SimpleNodeWrapper {
         
         private final Expecting.Node node;
         
         private SimpleNodeWrapper(Expecting.Node node) {
             this.node = node;
+        }
+        
+        public String key() {
+            return node.key();
         }
         
         public boolean isEOF() {
@@ -137,14 +105,14 @@ public class SimpleRepairStrategy implements RepairStrategy {
     enum FixStrategy {
         
         END_OBJ_OR_PAIR(
-                (SimpleNodeWrapper node) -> node.isEOF() && node.endObjOrPair(),
-                (String json, List<ParseTree> beRepairParseList) -> json + KeySymbol.R_BRACE.val()),
+                (node, beRepairParseList) -> node.isEOF() && node.endObjOrPair(),
+                (json, node, beRepairParseList) -> json + KeySymbol.R_BRACE.val()),
         END_ARR_OR_VALUE(
-                (SimpleNodeWrapper node) -> node.isEOF() && node.endArrOrValue(),
-                (String json, List<ParseTree> beRepairParseList) -> json + KeySymbol.R_BRACKET.val()),
+                (node, beRepairParseList) -> node.isEOF() && node.endArrOrValue(),
+                (json, node, beRepairParseList) -> json + KeySymbol.R_BRACKET.val()),
         START_PAIR(
-                (SimpleNodeWrapper node) -> node.isEOF() && node.startPair(),
-                (String json, List<ParseTree> beRepairParseList) -> {
+                (node, beRepairParseList) -> node.isEOF() && node.startPair(),
+                (json, node, beRepairParseList) -> {
                     int index = -1;
                     for (int i = beRepairParseList.size() - 1; i > 0; i--) {
                         ParseTree parseNode = beRepairParseList.get(i);
@@ -155,8 +123,8 @@ public class SimpleRepairStrategy implements RepairStrategy {
                     return json.substring(0, index) + KeySymbol.R_BRACE.val();
                 }),
         VALUE(
-                (SimpleNodeWrapper node) -> node.isEOF() && node.expectingValue(),
-                (String json, List<ParseTree> beRepairParseList) -> {
+                (node, beRepairParseList) -> node.isEOF() && node.expectingValue(),
+                (json, node, beRepairParseList) -> {
                     int index = -1;
                     for (int i = beRepairParseList.size() - 1; i > 0; i--) {
                         ParseTree parseNode = beRepairParseList.get(i);
@@ -173,26 +141,81 @@ public class SimpleRepairStrategy implements RepairStrategy {
                     return json;
                 }),
         EOF(
-                SimpleNodeWrapper::expectingEOF,
-                (String json, List<ParseTree> beRepairParseList) -> KeySymbol.L_BRACE.val() + json),
+                (node, beRepairParseList) -> node.expectingEOF(),
+                (json, node, beRepairParseList) -> KeySymbol.L_BRACE.val() + json),
+        CLOSE_QUOTATION_MARK(
+                (node, beRepairParseList) -> node.expectingToken() && node.key().startsWith("\""),
+                (json, node, beRepairParseList) -> json.replaceFirst(node.key(), node.key() + "\"")),
+        OPEN_QUOTATION_MARK(
+                (node, beRepairParseList) -> node.expectingToken() && node.key().endsWith("\""),
+                (json, node, beRepairParseList) -> json.replaceFirst(node.key(), "\"" + node.key())),
+        STRING_QUOTATION_MARK(
+                (node, beRepairParseList) -> node.expectingToken() && node.key().endsWith(KeySymbol.COLON.val()),
+                (json, node, beRepairParseList) -> json.replaceFirst(node.key(), "\"" + node.key().substring(0, node.key().length() - 1) + "\":")),
+        VALUE_QUOTATION_MARK(
+                (node, beRepairParseList) -> node.expectingToken(),
+                (json, node, beRepairParseList) -> json.replaceFirst(node.key(), "\"" + node.key() + "\"")),
+        CLOSE_BRACE(
+                (node, beRepairParseList) -> beRepairParseList.stream().anyMatch(
+                        (parse) -> parse instanceof ErrorNode
+                                && node.key().equalsIgnoreCase(parse.getText()) && node.expectingObj()),
+                (json, node, beRepairParseList) -> {
+                    final int[] index = {-1};
+                    beRepairParseList.stream().filter(
+                            (parse) -> parse instanceof ErrorNode && node.key().equalsIgnoreCase(parse.getText())).findFirst()
+                            .ifPresent(parseTree -> index[0] = ((ErrorNodeImpl) parseTree).getSymbol().getCharPositionInLine());
+                    if (index[0] == -1) {
+                        return json;
+                    }
+                    if (index[0] == json.length() - 1) {
+                        return json + KeySymbol.R_BRACE.val();
+                    }
+                    String prefix = json.substring(0, index[0] + 1);
+                    String suffix = json.substring(index[0] + 1);
+                    return prefix + KeySymbol.R_BRACE.val() + suffix;
+                }),
+        CLOSE_BRACKET(
+                (node, beRepairParseList) -> beRepairParseList.stream().anyMatch(
+                        (parse) -> parse instanceof ErrorNode
+                                && node.key().equalsIgnoreCase(parse.getText()) && node.expectingArr()),
+                (json, node, beRepairParseList) -> {
+                    final int[] index = {-1};
+                    beRepairParseList.stream().filter(
+                            (parse) -> parse instanceof ErrorNode && node.key().equalsIgnoreCase(parse.getText())).findFirst()
+                            .ifPresent(parseTree -> index[0] = ((ErrorNodeImpl) parseTree).getSymbol().getCharPositionInLine());
+                    if (index[0] == -1) {
+                        return json;
+                    }
+                    if (index[0] == json.length() - 1) {
+                        return json + KeySymbol.R_BRACKET.val();
+                    }
+                    String prefix = json.substring(0, index[0] + 1);
+                    String suffix = json.substring(index[0] + 1);
+                    return prefix + KeySymbol.R_BRACKET.val() + suffix;
+                }),
                 ;
         
-        final Predicate<SimpleNodeWrapper> expectingFixStrategy;
-        final BiFunction<String, List<ParseTree>, String> fixStrategy;
+        final BiPredicate<SimpleNodeWrapper, List<ParseTree>> expectingFixStrategy;
+        final BaseFixStrategy fixStrategy;
         
-        FixStrategy(Predicate<SimpleNodeWrapper> expectingFixStrategy, BiFunction<String, List<ParseTree>, String> fixStrategy) {
+        FixStrategy(BiPredicate<SimpleNodeWrapper, List<ParseTree>> expectingFixStrategy, BaseFixStrategy fixStrategy) {
             this.expectingFixStrategy = expectingFixStrategy;
             this.fixStrategy = fixStrategy;
         }
         
-        public static FixStrategy get(SimpleNodeWrapper node) {
+        public static FixStrategy get(SimpleNodeWrapper node, List<ParseTree> parseTrees) {
             for (FixStrategy strategy : values()) {
-                if (strategy.expectingFixStrategy.test(node)) {
+                if (strategy.expectingFixStrategy.test(node, parseTrees)) {
                     return strategy;
                 }
             }
             return null;
         }
         
+    }
+    
+    interface BaseFixStrategy {
+        
+        String fix(String json, SimpleNodeWrapper node, List<ParseTree> beRepairParseList);
     }
 }
