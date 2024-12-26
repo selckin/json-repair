@@ -31,7 +31,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 public class BenchmarkTests {
-
+    
     @Param({
             "{\"f\":\"v\", \"f2\":\"v2\"",
             "{\"f\":\"v\", \"a\":[1",
@@ -40,20 +40,20 @@ public class BenchmarkTests {
             "f:v"
     })
     String anomalyJSON;
-
+    
     @Benchmark
     public void testSimpleRepairStrategy(Blackhole blackhole) {
         JSONRepair repair = new JSONRepair();
         blackhole.consume(repair.handle(anomalyJSON));
     }
-
+    
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(BenchmarkTests.class.getSimpleName())
-                .result("./reports/benchmark/benchmark_0.1.0.json")
+                .result("./reports/benchmark/benchmark_0.2.1.json")
                 .resultFormat(ResultFormatType.JSON)
                 .build();
         new Runner(opt).run();
     }
-
+    
 }
