@@ -17,6 +17,7 @@ package io.github.haibiiin.json.repair.strategy;
 
 import io.github.haibiiin.json.repair.Expecting;
 import io.github.haibiiin.json.repair.RepairStrategy;
+import io.github.haibiiin.json.repair.UnableHandleException;
 import io.github.haibiiin.json.repair.antlr.KeySymbol;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -32,11 +33,11 @@ public class SimpleRepairStrategy implements RepairStrategy {
         SimpleNodeWrapper simpleNode = new SimpleNodeWrapper(node);
         
         FixStrategy strategy = FixStrategy.get(simpleNode, beRepairParseList);
-        if (strategy != null) {
-            return strategy.fixStrategy.fix(json, simpleNode, beRepairParseList);
+        if (strategy == null) {
+            throw new UnableHandleException();
         }
         
-        return json;
+        return strategy.fixStrategy.fix(json, simpleNode, beRepairParseList);
     }
     
     static class SimpleNodeWrapper {
@@ -138,7 +139,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
                     if (json.substring(index).contains(KeySymbol.COLON.val())) {
                         return json + KeySymbol.NULL.val() + KeySymbol.R_BRACE.val();
                     }
-                    return json;
+                    throw new UnableHandleException();
                 }),
         EOF(
                 (node, beRepairParseList) -> node.expectingEOF(),
@@ -165,7 +166,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
                             (parse) -> parse instanceof ErrorNode && node.key().equalsIgnoreCase(parse.getText())).findFirst()
                             .ifPresent(parseTree -> index[0] = ((ErrorNodeImpl) parseTree).getSymbol().getCharPositionInLine());
                     if (index[0] == -1) {
-                        return json;
+                        throw new UnableHandleException();
                     }
                     if (index[0] == json.length() - 1) {
                         return json + KeySymbol.R_BRACE.val();
@@ -184,7 +185,7 @@ public class SimpleRepairStrategy implements RepairStrategy {
                             (parse) -> parse instanceof ErrorNode && node.key().equalsIgnoreCase(parse.getText())).findFirst()
                             .ifPresent(parseTree -> index[0] = ((ErrorNodeImpl) parseTree).getSymbol().getCharPositionInLine());
                     if (index[0] == -1) {
-                        return json;
+                        throw new UnableHandleException();
                     }
                     if (index[0] == json.length() - 1) {
                         return json + KeySymbol.R_BRACKET.val();
