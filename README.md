@@ -36,7 +36,7 @@ String correctJSON = repair.handle(mistakeJSON);
 
 ## Feature
 
-You can learn about all the JSON exceptions that the current version 0.2.1 of **json-repair** supports for repair by checking the [test case dataset](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml).
+You can learn about all the JSON exceptions that the current version 0.2.1 of **json-repair** supports for repair by checking the [test case dataset](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) or [test report](https://haibiiin.github.io/json-repair/reports/testcase/).
 
 The functions based on the current version 0.2.1 are as follows:
 

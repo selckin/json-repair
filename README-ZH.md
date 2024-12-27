@@ -38,7 +38,7 @@ String correctJSON = repair.handle(mistakeJSON);
 
 ## 功能特性
 
-你可以通过查看 [测试用例数据集](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) 了解当前 0.2.1 版本 **json-repair** 支持修补的所有 JSON 异常。
+你可以通过查看 [测试用例数据集](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) 或 [测试报告](https://haibiiin.github.io/json-repair/reports/testcase/) 了解当前 0.2.1 版本 **json-repair** 支持修补的所有 JSON 异常。
 
 基于当前 0.2.1 版本的功能如下：
 
