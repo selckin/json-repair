@@ -39,7 +39,13 @@ public class TestCaseArgumentsProvider implements ArgumentsProvider, AnnotationC
         xStream.addPermission(AnyTypePermission.ANY);
         xStream.setClassLoader(this.getClass().getClassLoader());
         List<TestCase> testCaseList = (List<TestCase>) xStream.fromXML(this.getClass().getResource(filePath));
-        return testCaseList.stream().map((testCase) -> Arguments.of(testCase.anomaly, testCase.correct));
+        switch (dataType) {
+            case CORRECT:
+                return testCaseList.stream().map((testCase -> Arguments.of(testCase.anomaly, testCase.correct, testCase.reference)));
+            case SIMPLE:
+            default:
+                return testCaseList.stream().map((testCase -> Arguments.of(testCase.anomaly, testCase.correct)));
+        }
     }
     
     @Override

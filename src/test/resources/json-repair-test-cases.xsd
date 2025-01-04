@@ -23,6 +23,7 @@
                         <xs:sequence>
                             <xs:element name="anomaly" type="xs:string"/>
                             <xs:element name="correct" type="xs:string"/>
+                            <xs:element name="reference" type="xs:string" minOccurs="0"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
