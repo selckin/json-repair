@@ -30,14 +30,14 @@ public class SimpleRepairStrategy implements RepairStrategy {
     @Override
     public String repair(String json, List<ParseTree> beRepairParseList, Expecting expecting) {
         Expecting.Node node = expecting.first();
-        SimpleNodeWrapper simpleNode = new SimpleNodeWrapper(node);
+        SimpleNodeWrapper nodeWrapper = new SimpleNodeWrapper(node);
         
-        FixStrategy strategy = FixStrategy.get(simpleNode, beRepairParseList);
+        FixStrategy strategy = FixStrategy.get(nodeWrapper, beRepairParseList);
         if (strategy == null) {
             throw new UnableHandleException();
         }
         
-        return strategy.fixStrategy.fix(json, simpleNode, beRepairParseList);
+        return strategy.fixStrategy.fix(json, nodeWrapper, beRepairParseList);
     }
     
     static class SimpleNodeWrapper {
