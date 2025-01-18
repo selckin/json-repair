@@ -57,11 +57,26 @@ public class SyntaxErrorListener implements ANTLRErrorListener {
             this.expecting.add(i1, expectingKey, expectingStrs);
         }
         if (recognizer instanceof JSONLexer) {
-            String expectingKey = s.substring(s.indexOf("'") + 1, s.lastIndexOf("'"));
+            String expectingKey = getExpectingKey(s);
             List<String> expectingStrs = new ArrayList<>();
             expectingStrs.add(KeySymbol.TOKEN.val());
             this.expecting.add(i1, expectingKey, expectingStrs);
         }
+    }
+    
+    private String getExpectingKey(String s) {
+        String expectingKey = s.substring(s.indexOf("'") + 1, s.lastIndexOf("'"));
+        int lastIndexOfLF = expectingKey.lastIndexOf("\\n");
+        if (lastIndexOfLF == -1) {
+            lastIndexOfLF = expectingKey.lastIndexOf("\\r");
+        }
+        if (lastIndexOfLF == -1) {
+            lastIndexOfLF = expectingKey.lastIndexOf("\\r\\n");
+        }
+        if (lastIndexOfLF != -1) {
+            expectingKey = expectingKey.substring(0, lastIndexOfLF);
+        }
+        return expectingKey;
     }
     
     @Override

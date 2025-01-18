@@ -120,4 +120,18 @@
         <anomaly>f:v</anomaly>
         <correct>{"f":"v"}</correct>
     </test-case>
+    <test-case>
+        <anomaly>
+            {
+                "f1":"v1,
+                "f2":"v2"
+            }
+        </anomaly>
+        <correct>
+            {
+                "f1":"v1",
+                "f2":"v2"
+            }
+        </correct>
+    </test-case>
 </test-cases>
