@@ -1,0 +1,289 @@
+[
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.github.haibiiin.json.repair.BenchmarkTests.testSimpleRepairStrategy",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Dvisualvm.id=23385551814679",
+            "-javaagent:/IntelliJ IDEA Community Edition.app/Contents/lib/idea_rt.jar=62718:/IntelliJ IDEA Community Edition.app/Contents/bin",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_302",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.302-b08",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "anomalyJSON" : "{\"f\":\"v\", \"f2\":\"v2\""
+        },
+        "primaryMetric" : {
+            "score" : 9084.511668932475,
+            "scoreError" : 4890.013682389129,
+            "scoreConfidence" : [
+                4194.497986543346,
+                13974.525351321605
+            ],
+            "scorePercentiles" : {
+                "0.0" : 7855.4402836546,
+                "50.0" : 9025.02546574924,
+                "90.0" : 10752.76518253247,
+                "95.0" : 10752.76518253247,
+                "99.0" : 10752.76518253247,
+                "99.9" : 10752.76518253247,
+                "99.99" : 10752.76518253247,
+                "99.999" : 10752.76518253247,
+                "99.9999" : 10752.76518253247,
+                "100.0" : 10752.76518253247
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    7874.495026418472,
+                    9025.02546574924,
+                    10752.76518253247,
+                    7855.4402836546,
+                    9914.832386307586
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.github.haibiiin.json.repair.BenchmarkTests.testSimpleRepairStrategy",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Dvisualvm.id=23385551814679",
+            "-javaagent:/IntelliJ IDEA Community Edition.app/Contents/lib/idea_rt.jar=62718:/IntelliJ IDEA Community Edition.app/Contents/bin",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_302",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.302-b08",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "anomalyJSON" : "{\"f\":\"v\", \"a\":[1"
+        },
+        "primaryMetric" : {
+            "score" : 60784.96953795049,
+            "scoreError" : 91271.87659631041,
+            "scoreConfidence" : [
+                -30486.907058359917,
+                152056.8461342609
+            ],
+            "scorePercentiles" : {
+                "0.0" : 42339.365410611696,
+                "50.0" : 52420.44169043298,
+                "90.0" : 100272.56952345425,
+                "95.0" : 100272.56952345425,
+                "99.0" : 100272.56952345425,
+                "99.9" : 100272.56952345425,
+                "99.99" : 100272.56952345425,
+                "99.999" : 100272.56952345425,
+                "99.9999" : 100272.56952345425,
+                "100.0" : 100272.56952345425
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    100272.56952345425,
+                    64383.45541462171,
+                    44509.01565063179,
+                    42339.365410611696,
+                    52420.44169043298
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.github.haibiiin.json.repair.BenchmarkTests.testSimpleRepairStrategy",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Dvisualvm.id=23385551814679",
+            "-javaagent:/IntelliJ IDEA Community Edition.app/Contents/lib/idea_rt.jar=62718:/IntelliJ IDEA Community Edition.app/Contents/bin",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_302",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.302-b08",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "anomalyJSON" : "{\"f\":\"v\", \"a\":[1,2], \"o1\":{\"f1\":\"v1\"}, "
+        },
+        "primaryMetric" : {
+            "score" : 59371.826459491436,
+            "scoreError" : 145474.88658197143,
+            "scoreConfidence" : [
+                -86103.06012247999,
+                204846.71304146288
+            ],
+            "scorePercentiles" : {
+                "0.0" : 19958.496415450303,
+                "50.0" : 42074.76433522369,
+                "90.0" : 100452.5090490951,
+                "95.0" : 100452.5090490951,
+                "99.0" : 100452.5090490951,
+                "99.9" : 100452.5090490951,
+                "99.99" : 100452.5090490951,
+                "99.999" : 100452.5090490951,
+                "99.9999" : 100452.5090490951,
+                "100.0" : 100452.5090490951
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    99176.96623147148,
+                    100452.5090490951,
+                    42074.76433522369,
+                    35196.396266216645,
+                    19958.496415450303
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.github.haibiiin.json.repair.BenchmarkTests.testSimpleRepairStrategy",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Dvisualvm.id=23385551814679",
+            "-javaagent:/IntelliJ IDEA Community Edition.app/Contents/lib/idea_rt.jar=62718:/IntelliJ IDEA Community Edition.app/Contents/bin",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_302",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.302-b08",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "anomalyJSON" : "\"f\":\"v\", \"a\":[1,2], \"o1\":{\"f1\":\"v1\"}"
+        },
+        "primaryMetric" : {
+            "score" : 43059.28744063732,
+            "scoreError" : 73289.87012828703,
+            "scoreConfidence" : [
+                -30230.58268764971,
+                116349.15756892436
+            ],
+            "scorePercentiles" : {
+                "0.0" : 26817.38675808871,
+                "50.0" : 41100.5318853029,
+                "90.0" : 74885.80436570232,
+                "95.0" : 74885.80436570232,
+                "99.0" : 74885.80436570232,
+                "99.9" : 74885.80436570232,
+                "99.99" : 74885.80436570232,
+                "99.999" : 74885.80436570232,
+                "99.9999" : 74885.80436570232,
+                "100.0" : 74885.80436570232
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    42396.45412727886,
+                    30096.260066813815,
+                    26817.38675808871,
+                    41100.5318853029,
+                    74885.80436570232
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.github.haibiiin.json.repair.BenchmarkTests.testSimpleRepairStrategy",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 1,
+        "jvm" : "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Dvisualvm.id=23385551814679",
+            "-javaagent:/IntelliJ IDEA Community Edition.app/Contents/lib/idea_rt.jar=62718:/IntelliJ IDEA Community Edition.app/Contents/bin",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_302",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.302-b08",
+        "warmupIterations" : 5,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "anomalyJSON" : "f:v"
+        },
+        "primaryMetric" : {
+            "score" : 247249.79800482007,
+            "scoreError" : 290541.10268745705,
+            "scoreConfidence" : [
+                -43291.30468263698,
+                537790.9006922771
+            ],
+            "scorePercentiles" : {
+                "0.0" : 168838.71505376344,
+                "50.0" : 242790.42399421826,
+                "90.0" : 355817.8080545632,
+                "95.0" : 355817.8080545632,
+                "99.0" : 355817.8080545632,
+                "99.9" : 355817.8080545632,
+                "99.99" : 355817.8080545632,
+                "99.999" : 355817.8080545632,
+                "99.9999" : 355817.8080545632,
+                "100.0" : 355817.8080545632
+            },
+            "scoreUnit" : "ns/op",
+            "rawData" : [
+                [
+                    355817.8080545632,
+                    281766.62898712925,
+                    242790.42399421826,
+                    187035.41393442624,
+                    168838.71505376344
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+
