@@ -82,6 +82,14 @@ You can check out [report](https://haibiiin.github.io/json-repair/reports/covera
 
  - [ ] Make more accurate corrections to abnormal JSON by providing reference JSON styles.
 
+## Development Guid
+
+After cloning the code to your local machine, navigate to the project's root directory. Build and install all modules, it’ll install modules into Maven local repository cache, and also generate Java class files of parser from ANTLR grammar .g4 files to prevent from compile error of parser on IDE.
+
+```shell
+mvnw install
+```
+
 ## License
 
 json-repair is licensed under the [Apache-2.0 license](https://github.com/HAibiiin/json-repair/blob/master/LICENSE).

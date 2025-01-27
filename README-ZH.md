@@ -84,6 +84,14 @@ BenchmarkTests.testSimpleRepairStrategy                                      f:v
 
  - [ ] 通过提供参考 JSON 样式，对异常 JSON 进行更准确的修正；
 
+## 开发指南
+
+将代码克隆到本地后，在项目根目录下，编译并安装所有模块到 Maven 本地仓库缓存，同时会生成 ANTLR `.g4` 语法文件对应的解析器 Java 类，这样在 IDE 就不会有相关的编译错误了。
+
+```shell
+mvnw install
+```
+
 ## 开源许可
 
 [Apache-2.0 license](https://github.com/HAibiiin/json-repair/blob/master/LICENSE).
