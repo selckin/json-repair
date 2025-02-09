@@ -24,6 +24,7 @@ public class JSONRepairConfig {
     public JSONRepairConfig() {
         this.properties = new Properties();
         this.properties.put(Property.MAX_TRY_TIMES.name(), 20);
+        this.properties.put(Property.EXTRACT_JSON.name(), false);
     }
     
     public int maxTryTimes() {
@@ -33,8 +34,17 @@ public class JSONRepairConfig {
     public void maxTryTimes(int value) {
         this.properties.put(Property.MAX_TRY_TIMES.name(), value);
     }
-    
+
+    public boolean extractJSON() {
+        return (boolean) this.properties.getOrDefault(Property.EXTRACT_JSON.name(), false);
+    }
+
+    public void enableExtractJSON() {
+        this.properties.put(Property.EXTRACT_JSON.name(), true);
+    }
+
     public enum Property {
+        EXTRACT_JSON,
         MAX_TRY_TIMES;
     }
 }
