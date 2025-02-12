@@ -29,20 +29,21 @@ public class SimpleExtractStrategy implements ExtractStrategy {
     public String extract(String content, List<ParseTree> beRepairParseList, Expecting expecting) {
         if (validParseTreeList(beRepairParseList)) {
             ParseTree parseTree = beRepairParseList.get(1);
+            int start, end;
             if (parseTree instanceof JSONParser.ObjContext) {
-                int start = ((JSONParser.ObjContext) parseTree).getStart().getStartIndex();
-                int end = ((JSONParser.ObjContext) parseTree).getStop().getStopIndex();
-                return content.substring(start, end + 1);
+                start = ((JSONParser.ObjContext) parseTree).getStart().getStartIndex();
+                end = ((JSONParser.ObjContext) parseTree).getStop().getStopIndex() + 1;
+                return content.substring(start, end);
             }
             if (parseTree instanceof JSONParser.ArrContext) {
-                int start = ((JSONParser.ArrContext) parseTree).getStart().getStartIndex();
-                int end = ((JSONParser.ArrContext) parseTree).getStop().getStopIndex();
-                return content.substring(start, end + 1);
+                start = ((JSONParser.ArrContext) parseTree).getStart().getStartIndex();
+                end = ((JSONParser.ArrContext) parseTree).getStop().getStopIndex() + 1;
+                return content.substring(start, end);
             }
             if (parseTree instanceof JSONParser.ValueContext) {
-                int start = ((JSONParser.ValueContext) parseTree).getStart().getStartIndex();
-                int end = ((JSONParser.ValueContext) parseTree).getStop().getStopIndex();
-                return content.substring(start, end + 1);
+                start = ((JSONParser.ValueContext) parseTree).getStart().getStartIndex();
+                end = ((JSONParser.ValueContext) parseTree).getStop().getStopIndex() + 1;
+                return content.substring(start, end);
             }
             if (parseTree instanceof TerminalNode) {
                 String symbol = ((TerminalNode) parseTree).getSymbol().getText();
