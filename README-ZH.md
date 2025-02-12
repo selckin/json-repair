@@ -19,14 +19,14 @@
 <dependency>
     <groupId>io.github.haibiiin</groupId>
     <artifactId>json-repair</artifactId>
-    <version>0.2.2</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
 Gradle 配置如下：
 
 ```
-implementation 'io.github.haibiiin:json-repair:0.2.2'
+implementation 'io.github.haibiiin:json-repair:0.3.0'
 ```
 
 接下来你只需要实例化 `JSONRepair` 并调用 `handle()` 方法便可以完成异常 JSON 的修复。
@@ -36,13 +36,22 @@ JSONRepair repair = new JSONRepair();
 String correctJSON = repair.handle(mistakeJSON);
 ```
 
+如果需要从文本字符串中提取出符合 JSON 格式的内容，需要通过 JSONRepairConfig 启用提取功能。
+
+```java
+JSONRepairConfig config = new JSONRepairConfig();
+config.enableExtractJSON();
+JSONRepair repair = new JSONRepair(config);
+String correctJSON = repair.handle(mistakeJSON);
+```
+
 ## 功能特性
 
-你可以通过查看 [测试用例数据集](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) 或 [测试报告](https://haibiiin.github.io/json-repair/reports/testcase/) 了解当前 0.2.2 版本 **json-repair** 支持修补的所有 JSON 异常。
+你可以通过查看 [测试用例数据集](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) 或 [测试报告](https://haibiiin.github.io/json-repair/reports/testcase/) 了解当前 0.3.0 版本 **json-repair** 支持修补的所有 JSON 异常。
 
-基于当前 0.2.2 版本的功能如下：
+基于当前 0.3.0 版本的功能如下：
 
-* 实现对 JSON 字符串基本修补功能
+* 实现对 JSON 字符串基本修补功能：
   * 修补缺少的右括号；
   * 修补缺少的右中括号；
   * 值为数组情况下多余逗号清理；
@@ -51,12 +60,15 @@ String correctJSON = repair.handle(mistakeJSON);
   * 修补缺少的最外层括号； 
   * 修补个别场景下字符串缺少引号； 
   * 提供自定义修补尝试次数。
+* 实现对基于文本字符串的 JSON 提取功能：
+  * 提取符合 JSON 格式的字符串；
+  * 并支持对提取字符串的有限修复； 
 
 ## 性能指标
 
 你可以通过运行 [BenchmarkTests](https://github.com/HAibiiin/json-repair/blob/main/src/test/java/io/github/haibiiin/json/repair/BenchmarkTests.java) 进行更多场景的性能测试
 
-基于当前 0.2.2 版本的性能测试如下：
+基于当前 0.3.0 版本的性能测试如下：
 
 ```
 --AverageTime --NANOSECONDS --Warmup-5-1-SECONDS

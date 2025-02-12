@@ -19,13 +19,13 @@ To get started with json-repair, first add it as a dependency in your Java proje
 <dependency>
     <groupId>io.github.haibiiin</groupId>
     <artifactId>json-repair</artifactId>
-    <version>0.2.2</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 If you're using Gradle, that looks like this:
 
 ```
-implementation 'io.github.haibiiin:json-repair:0.2.2'
+implementation 'io.github.haibiiin:json-repair:0.3.0'
 ```
 Next, You can instantiate a `JSONRepair` object  then call `handle()` function to repair JSON string like so.
 
@@ -34,11 +34,20 @@ JSONRepair repair = new JSONRepair();
 String correctJSON = repair.handle(mistakeJSON);
 ```
 
+If you need to extract content that conforms to the JSON format from a text string, you need to enable the extraction function through JSONRepairConfig.
+
+```java
+JSONRepairConfig config = new JSONRepairConfig();
+config.enableExtractJSON();
+JSONRepair repair = new JSONRepair(config);
+String correctJSON = repair.handle(mistakeJSON);
+```
+
 ## Feature
 
-You can learn about all the JSON exceptions that the current version 0.2.2 of **json-repair** supports for repair by checking the [test case dataset](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) or [test report](https://haibiiin.github.io/json-repair/reports/testcase/).
+You can learn about all the JSON exceptions that the current version 0.3.0 of **json-repair** supports for repair by checking the [test case dataset](https://github.com/HAibiiin/json-repair/blob/main/src/test/resources/case/simple.xml) or [test report](https://haibiiin.github.io/json-repair/reports/testcase/).
 
-The functions based on the current version 0.2.2 are as follows:
+The functions based on the current version 0.3.0 are as follows:
 
 * Implement the basic repair function for JSON strings:
   * Adding the missing right parenthesis;
@@ -49,12 +58,15 @@ The functions based on the current version 0.2.2 are as follows:
   * Patch the missing outermost parentheses; 
   * Patch the lack of quotation marks for strings in individual scenarios;
   * Provide the number of custom patching attempts.
+* Implement the function of extracting JSON from text strings:
+  * Extract the strings that conform to the JSON format;
+  * And support the limited repair of the extracted strings.
 
 ## Benchmark
 
 You can conduct performance tests in more scenarios by running [BenchmarkTests](https://github.com/HAibiiin/json-repair/blob/main/src/test/java/io/github/haibiiin/json/repair/BenchmarkTests.java).
 
-The benchmark based on the current version 0.2.2 as follows:
+The benchmark based on the current version 0.3.0 as follows:
 
 ```
 --AverageTime --NANOSECONDS --Warmup-5-1-SECONDS
