@@ -19,6 +19,7 @@ import io.github.haibiiin.json.repair.antlr.DefaultErrorStrategyWrapper;
 import io.github.haibiiin.json.repair.antlr.SyntaxErrorListener;
 import io.github.haibiiin.json.repair.antlr.autogen.JSONLexer;
 import io.github.haibiiin.json.repair.antlr.autogen.JSONParser;
+import io.github.haibiiin.json.repair.strategy.SimpleExtractStrategy;
 import io.github.haibiiin.json.repair.strategy.SimpleRepairStrategy;
 import java.util.List;
 import org.antlr.v4.runtime.CharStream;
@@ -30,26 +31,38 @@ public class JSONRepair {
     
     private final RepairStrategy repairStrategy;
     
+    private final ExtractStrategy extractStrategy;
+    
     private final JSONRepairConfig properties;
     
     public JSONRepair() {
         this.repairStrategy = new SimpleRepairStrategy();
+        this.extractStrategy = new SimpleExtractStrategy();
         this.properties = new JSONRepairConfig();
     }
     
     public JSONRepair(RepairStrategy repairStrategy) {
         this.repairStrategy = repairStrategy;
+        this.extractStrategy = new SimpleExtractStrategy();
         this.properties = new JSONRepairConfig();
     }
     
     public JSONRepair(JSONRepairConfig config) {
         this.repairStrategy = new SimpleRepairStrategy();
+        this.extractStrategy = new SimpleExtractStrategy();
         this.properties = config;
     }
     
     public JSONRepair(RepairStrategy repairStrategy, JSONRepairConfig config) {
         this.repairStrategy = repairStrategy;
+        this.extractStrategy = new SimpleExtractStrategy();
         this.properties = config;
+    }
+    
+    public JSONRepair(RepairStrategy repairStrategy, ExtractStrategy extractStrategy, JSONRepairConfig properties) {
+        this.repairStrategy = repairStrategy;
+        this.extractStrategy = extractStrategy;
+        this.properties = properties;
     }
     
     public String handle(String beRepairJSON) throws RepairFailureException {
@@ -71,11 +84,15 @@ public class JSONRepair {
         }
         
         int maxTryTimes = Math.max(expecting.sum(), this.properties.maxTryTimes());
-        
         List<ParseTree> beRepairParseList = ParserListBuilder.build(ctx);
-        String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
         
-        return subHandle(repairJSON, maxTryTimes, 0);
+        if (this.properties.extractJSON()) {
+            String repairJSON = extractStrategy.extract(beRepairJSON, beRepairParseList, expecting);
+            return subHandle(repairJSON, maxTryTimes, 0);
+        } else {
+            String repairJSON = repairStrategy.repair(beRepairJSON, beRepairParseList, expecting);
+            return subHandle(repairJSON, maxTryTimes, 0);
+        }
     }
     
     public String subHandle(String beRepairJSON, int maxTryTimes, int tryTimes) {

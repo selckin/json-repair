@@ -31,4 +31,14 @@ public class FixerTests {
         JSONRepair repair = new JSONRepair();
         Assertions.assertEquals(correct, repair.handle(anomaly));
     }
+    
+    @ParameterizedTest(name = "{0} > {1}")
+    @TestCaseSource(path = "/case/extract.xml", type = FixerStrategy.SIMPLE)
+    @ArgumentsSource(TestCaseArgumentsProvider.class)
+    public void testSimpleExtract(String anomaly, String correct) {
+        JSONRepairConfig config = new JSONRepairConfig();
+        config.enableExtractJSON();
+        JSONRepair repair = new JSONRepair(config);
+        Assertions.assertEquals(correct, repair.handle(anomaly));
+    }
 }

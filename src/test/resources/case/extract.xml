@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2024 HAibiiin
+
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+
+~     http://www.apache.org/licenses/LICENSE-2.0
+
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<test-cases xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="../json-repair-test-cases.xsd">
+    <test-case>
+        <anomaly>json data {"key":"value"}</anomaly>
+        <correct>{"key":"value"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"key":"value"} end</anomaly>
+        <correct>{"key":"value"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>
+            json data
+            {
+                "f1":"v1,
+                "f2":"v2"
+            }
+        </anomaly>
+        <correct>{
+                "f1":"v1",
+                "f2":"v2"
+            }</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data "value"</anomaly>
+        <correct>"value"</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data [1,2,3]</anomaly>
+        <correct>[1,2,3]</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data true</anomaly>
+        <correct>true</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data false</anomaly>
+        <correct>false</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data null</anomaly>
+        <correct>null</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v"</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "f2":"v2"</anomaly>
+        <correct>{"f":"v", "f2":"v2"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v",</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "f2":"v2",</anomaly>
+        <correct>{"f":"v", "f2":"v2"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":1,</anomaly>
+        <correct>{"f":1}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":1, "f2":2,</anomaly>
+        <correct>{"f":1, "f2":2}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":[1]</anomaly>
+        <correct>{"f":[1]}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "a":[1]</anomaly>
+        <correct>{"f":"v", "a":[1]}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "a":[1</anomaly>
+        <correct>{"f":"v", "a":[1]}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "a":[1,</anomaly>
+        <correct>{"f":"v", "a":[1]}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "o1":{"f1":"v1"}</anomaly>
+        <correct>{"f":"v", "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "o1":{"f1":"v1"</anomaly>
+        <correct>{"f":"v", "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "o1":{"f1":"v1"},</anomaly>
+        <correct>{"f":"v", "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "o1":{"f1":"v1"}, "a":[1,</anomaly>
+        <correct>{"f":"v", "o1":{"f1":"v1"}, "a":[1]}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "a":[1,2], "o1":{"f1":"v1"}, </anomaly>
+        <correct>{"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f": </anomaly>
+        <correct>{"f":null}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "a":[ </anomaly>
+        <correct>{"f":"v", "a":[]}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>json data {"f":"v", "o":{ </anomaly>
+        <correct>{"f":"v", "o":{}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v"</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v"}</anomaly>
+        <correct>{"f":"v"}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v", "a":[1,2], "o1":{"f1":"v1"}</anomaly>
+        <correct>{"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</correct>
+    </test-case>
+    <test-case>
+        <anomaly>"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</anomaly>
+        <correct>{"f":"v", "a":[1,2], "o1":{"f1":"v1"}}</correct>
+    </test-case>
+</test-cases>
