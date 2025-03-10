@@ -21,9 +21,12 @@ public class TestCase {
     
     String correct;
     
-    public TestCase(String anomaly, String correct) {
+    String reference;
+    
+    public TestCase(String anomaly, String correct, String reference) {
         this.anomaly = anomaly;
         this.correct = correct;
+        this.reference = reference;
     }
     
     public String anomaly() {
@@ -32,5 +35,9 @@ public class TestCase {
     
     public String correct() {
         return correct;
+    }
+    
+    public String reference() {
+        return reference;
     }
 }

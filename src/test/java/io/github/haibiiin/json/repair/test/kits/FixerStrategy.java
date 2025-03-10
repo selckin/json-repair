@@ -16,5 +16,6 @@
 package io.github.haibiiin.json.repair.test.kits;
 
 public enum FixerStrategy {
-    SIMPLE;
+    SIMPLE,
+    CORRECT;
 }
