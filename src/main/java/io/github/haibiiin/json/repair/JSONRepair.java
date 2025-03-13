@@ -66,6 +66,10 @@ public class JSONRepair {
     }
     
     public String handle(String beRepairJSON) throws RepairFailureException {
+        if (!this.properties.lineFeed()) {
+            beRepairJSON = beRepairJSON.replaceAll("\\s*[\\r\\n]+\\s*", "");
+        }
+        
         CharStream charStream = CharStreams.fromString(beRepairJSON);
         JSONLexer lexer = new JSONLexer(charStream);
         JSONParser parser = new JSONParser(new CommonTokenStream(lexer));
