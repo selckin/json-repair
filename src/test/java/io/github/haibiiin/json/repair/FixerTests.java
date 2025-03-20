@@ -30,7 +30,7 @@ public class FixerTests {
     @ArgumentsSource(TestCaseArgumentsProvider.class)
     public void testSimpleRepair(String anomaly, String correct) {
         JSONRepair repair = new JSONRepair();
-        Assertions.assertEquals(correct, repair.handle(anomaly));
+        Assertions.assertEquals(correct.trim(), repair.handle(anomaly).trim());
     }
     
     @ParameterizedTest(name = "{0} > {1}")

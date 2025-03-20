@@ -134,4 +134,22 @@
             }
         </correct>
     </test-case>
+    <test-case>
+        <anomaly>
+            {
+                "f1": [
+                    {"f2": "v1"},
+                    {"f2": "v2"},
+                    {"f2": "v3
+        </anomaly>
+        <correct>
+            {
+                "f1": [
+                    {"f2": "v1"},
+                    {"f2": "v2"},
+                    {"f2": "v3"
+        }]}
+        </correct>
+    </test-case>
+
 </test-cases>
